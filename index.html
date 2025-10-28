@@ -1,17 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>User Input Reporter</title>
+  <title>皮卡堂投票网站</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Global User Reporter</h1>
+  <h1>皮卡堂投票</h1>
 
-  <input id="userInput" placeholder="Type something..." />
-  <button id="submitBtn">Submit</button>
+  <!-- Section 1 -->
+  <section class="vote-section">
+    <div class="option">
+      <img src="img1a.jpg" alt="图片1A">
+      <button class="vote-btn" data-group="1">选择A</button>
+    </div>
+    <div class="option">
+      <img src="img1b.jpg" alt="图片1B">
+      <button class="vote-btn" data-group="1">选择B</button>
+    </div>
+  </section>
 
-  <p id="statusMsg"></p>
+  <!-- Section 2 -->
+  <section class="vote-section">
+    <div class="option">
+      <img src="img2a.jpg" alt="图片2A">
+      <button class="vote-btn" data-group="2">选择A</button>
+    </div>
+    <div class="option">
+      <img src="img2b.jpg" alt="图片2B">
+      <button class="vote-btn" data-group="2">选择B</button>
+    </div>
+  </section>
 
+  <!-- Section 3 -->
+  <section class="input-section">
+    <label for="username">你的皮卡堂游戏名：</label>
+    <input type="text" id="username" placeholder="输入你的游戏名..." />
+    <button id="submitName">提交</button>
+    <p id="statusMsg"></p>
+  </section>
+
+  <!-- ✅ 注意这里：必须是 type="module" -->
   <script type="module" src="script.js"></script>
 </body>
 </html>

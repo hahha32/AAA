@@ -1,3 +1,4 @@
+// ✅ Firebase import
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
@@ -11,32 +12,57 @@ const firebaseConfig = {
   measurementId: "G-M7Q2892LHX"
 };
 
-// --- Initialize Firebase ---
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// --- DOM elements ---
-const input = document.getElementById("userInput");
-const btn = document.getElementById("submitBtn");
-const statusMsg = document.getElementById("statusMsg");
+// --- ✅ 按钮逻辑 ---
+const buttons = document.querySelectorAll(".vote-btn");
+const votes = {};
 
-// --- Submit user input to Firestore ---
-btn.addEventListener("click", async () => {
-  const text = input.value.trim();
-  if (!text) {
-    statusMsg.textContent = "⚠️ Please type something first!";
+buttons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const group = btn.dataset.group;
+
+    // 同组按钮全部取消active
+    buttons.forEach((b) => {
+      if (b.dataset.group === group) {
+        b.classList.remove("active");
+      }
+    });
+
+    // 当前按钮设为active
+    btn.classList.add("active");
+    votes[group] = btn.textContent;
+
+    console.log("当前选择：", votes);
+  });
+});
+
+// --- ✅ 提交部分 ---
+const input = document.getElementById("username");
+const submit = document.getElementById("submitName");
+const msg = document.getElementById("statusMsg");
+
+submit.addEventListener("click", async () => {
+  const name = input.value.trim();
+  if (!name) {
+    msg.textContent = "⚠️ 请输入你的游戏名！";
     return;
   }
 
   try {
-    await addDoc(collection(db, "reports"), { text, timestamp: new Date() });
-    statusMsg.textContent = "✅ Your input has been submitted!";
-    input.value = "";
+    await addDoc(collection(db, "votes"), {
+      name,
+      choice1: votes["1"] || "未选择",
+      choice2: votes["2"] || "未选择",
+      timestamp: new Date(),
+    });
 
-    // optional: fade out status message
-    setTimeout(() => (statusMsg.textContent = ""), 3000);
+    msg.textContent = "✅ 提交成功！感谢你的投票！";
+    input.value = "";
+    buttons.forEach((b) => b.classList.remove("active")); // 提交后重置颜色
   } catch (e) {
-    console.error("Error adding document: ", e);
-    statusMsg.textContent = "❌ Submission failed. Try again later.";
+    console.error("错误：", e);
+    msg.textContent = "❌ 提交失败，请稍后再试。";
   }
 });
