@@ -1,13 +1,6 @@
-// --- Import necessary Firebase modules ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// --- Firebase configuration ---
 const firebaseConfig = {
   apiKey: "AIzaSyBuZK63q2NwhGTUqhhJBSGgL7fISSUXtZs",
   authDomain: "web-app-c986e.firebaseapp.com",
@@ -25,35 +18,25 @@ const db = getFirestore(app);
 // --- DOM elements ---
 const input = document.getElementById("userInput");
 const btn = document.getElementById("submitBtn");
-const list = document.getElementById("reportList");
+const statusMsg = document.getElementById("statusMsg");
 
-// --- Add document ---
+// --- Submit user input to Firestore ---
 btn.addEventListener("click", async () => {
   const text = input.value.trim();
-  if (!text) return alert("Type something first!");
+  if (!text) {
+    statusMsg.textContent = "⚠️ Please type something first!";
+    return;
+  }
 
   try {
-    await addDoc(collection(db, "reports"), { text });
+    await addDoc(collection(db, "reports"), { text, timestamp: new Date() });
+    statusMsg.textContent = "✅ Your input has been submitted!";
     input.value = "";
-    loadReports();
+
+    // optional: fade out status message
+    setTimeout(() => (statusMsg.textContent = ""), 3000);
   } catch (e) {
-    console.error("Error adding doc: ", e);
+    console.error("Error adding document: ", e);
+    statusMsg.textContent = "❌ Submission failed. Try again later.";
   }
 });
-
-// --- Load all documents ---
-async function loadReports() {
-  list.innerHTML = "";
-  try {
-    const querySnapshot = await getDocs(collection(db, "reports"));
-    querySnapshot.forEach((doc) => {
-      const li = document.createElement("li");
-      li.textContent = doc.data().text;
-      list.appendChild(li);
-    });
-  } catch (e) {
-    console.error("Error loading docs: ", e);
-  }
-}
-
-loadReports();
