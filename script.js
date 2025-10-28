@@ -1,8 +1,13 @@
-// --- 1. Import necessary Firebase modules ---
+// --- Import necessary Firebase modules ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// --- 2. Your Firebase configuration ---
+// --- Firebase configuration ---
 const firebaseConfig = {
   apiKey: "AIzaSyBuZK63q2NwhGTUqhhJBSGgL7fISSUXtZs",
   authDomain: "web-app-c986e.firebaseapp.com",
@@ -13,33 +18,30 @@ const firebaseConfig = {
   measurementId: "G-M7Q2892LHX"
 };
 
-// --- 3. Initialize Firebase ---
+// --- Initialize Firebase ---
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// --- 4. DOM elements ---
+// --- DOM elements ---
 const input = document.getElementById("userInput");
 const btn = document.getElementById("submitBtn");
 const list = document.getElementById("reportList");
 
-// --- 5. Add data to Firestore ---
+// --- Add document ---
 btn.addEventListener("click", async () => {
   const text = input.value.trim();
-  if (!text) {
-    alert("Type something first!");
-    return;
-  }
+  if (!text) return alert("Type something first!");
 
   try {
     await addDoc(collection(db, "reports"), { text });
     input.value = "";
     loadReports();
-  } catch (error) {
-    console.error("Error adding document: ", error);
+  } catch (e) {
+    console.error("Error adding doc: ", e);
   }
 });
 
-// --- 6. Load all data from Firestore ---
+// --- Load all documents ---
 async function loadReports() {
   list.innerHTML = "";
   try {
@@ -49,10 +51,9 @@ async function loadReports() {
       li.textContent = doc.data().text;
       list.appendChild(li);
     });
-  } catch (error) {
-    console.error("Error loading data: ", error);
+  } catch (e) {
+    console.error("Error loading docs: ", e);
   }
 }
 
-// --- 7. Load existing reports when page starts ---
 loadReports();
